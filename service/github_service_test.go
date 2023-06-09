@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/cli/go-gh/v2/pkg/repository"
-	"github.com/jmatsu/gh-release-note/types/github_types"
 	"os"
 	"testing"
 	"time"
@@ -70,7 +69,7 @@ func TestGitHubServiceImpl_ListMergedPullRequests(t *testing.T) {
 }
 
 func TestGitHubServiceImpl_ListTags(t *testing.T) {
-	tags, err := service.ListTags()
+	tags, err := service.ListTags(10)
 
 	if err != nil {
 		t.Fatalf("fails due to %v", err)
@@ -78,22 +77,7 @@ func TestGitHubServiceImpl_ListTags(t *testing.T) {
 
 	t.Logf("returns %d tags", len(tags))
 
-	if len(tags) > 0 && tags[0].Ref == "" {
+	if len(tags) > 0 && tags[0].Name == "" {
 		t.Fatalf("tag is not assigned")
-	}
-}
-
-func TestGitHubServiceImpl_ResolveTag(t *testing.T) {
-	github_tag := github_types.GitHubTag{
-		Ref:    "refs/tags/dummy",
-		Object: github_types.GitHubGitObject{Sha: sha, Type: "commit"},
-	}
-
-	tag, err := service.ResolveTag(&github_tag)
-
-	if err != nil {
-		t.Fatalf("fails due to %v", err)
-	} else if tag.Commit.Sha != sha {
-		t.Fatalf("%s is expected but %s", sha, tag.Commit.Sha)
 	}
 }
