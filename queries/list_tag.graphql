@@ -1,0 +1,25 @@
+query($owner: String!, $name: String!, $limit: Int!) {
+  repository(owner: $owner, name: $name) {
+    refs(refPrefix: "refs/tags/", first: $limit, orderBy: {field: TAG_COMMIT_DATE, direction: DESC}) {
+      nodes {
+        name
+        target {
+          ... on Commit {
+            oid
+            abbreviatedOid
+            committedDate
+          }
+          ... on Tag {
+            target {
+              ... on Commit {
+                oid
+                abbreviatedOid
+                committedDate
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
