@@ -50,33 +50,22 @@ func GenerateReleaseNote(c *cli.Context, f func(c *cli.Context) (ReleaseNoteOpti
 
 	sinceDate, untilDate := opts.SinceDate, opts.UntilDate
 
-	if sinceDate == nil || untilDate == nil {
+	if sinceDate == nil {
 		tags, err := github.ListTags(opts.Limit)
 
 		if err != nil {
 			return errors.Join(errors.New("cannot get tags preserved on GitHub"), err)
 		}
 
-		if opts.SinceTagName != nil || opts.UntilTagName != nil {
+		if opts.SinceTagName != nil {
 			for _, t := range tags {
-				if sinceDate == nil && opts.SinceTagName != nil && t.Name == *opts.SinceTagName {
+				if t.Name == *opts.SinceTagName {
 					sinceDate = &t.Commit.CommittedDate
-				} else if untilDate == nil && opts.UntilTagName != nil && t.Name == *opts.UntilTagName {
-					untilDate = &t.Commit.CommittedDate
-				}
-
-				if sinceDate != nil && opts.UntilTagName == nil || untilDate != nil && opts.SinceTagName == nil {
 					break
 				}
 			}
 
-			if opts.SinceTagName != nil && sinceDate == nil {
-				return errors.New(fmt.Sprintf("%s is not found in this repository", *opts.SinceTagName))
-			}
-
-			if opts.UntilTagName != nil && untilDate == nil {
-				return errors.New(fmt.Sprintf("%s is not found in this repository", *opts.UntilTagName))
-			}
+			return errors.New(fmt.Sprintf("%s is not found in this repository", *opts.SinceTagName))
 		}
 
 		if sinceDate == nil {
@@ -87,13 +76,7 @@ func GenerateReleaseNote(c *cli.Context, f func(c *cli.Context) (ReleaseNoteOpti
 			}
 		}
 
-		if untilDate == nil {
-			if t, err := chooseTagViaPrompt("Complete --until-tag", tags); err != nil {
-				return errors.Join(errors.New("cannot choose the until tag"), err)
-			} else {
-				untilDate = &t.Commit.CommittedDate
-			}
-		}
+		// Don't suggest until-tag.
 	}
 
 	prs, err := github.ListMergedPullRequests(service.ListMergedPullRequestsOption{
