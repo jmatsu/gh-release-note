@@ -16,7 +16,7 @@ import (
 
 const (
 	// https://docs.github.com/en/search-github/getting-started-with-searching-on-github/understanding-the-search-syntax#query-for-dates
-	queryDateFormat = "2006-01-02T15:04:05+07:00"
+	queryDateFormat = "2006-01-02T15:04:05Z"
 )
 
 type GitHubService interface {
@@ -86,12 +86,12 @@ func (c *gitHubServiceImpl) ListMergedPullRequests(option ListMergedPullRequests
 	since, until := "*", "*"
 
 	if option.MergedAtSince != nil && option.MergedAtUntil != nil {
-		since = option.MergedAtSince.Format(queryDateFormat)
-		until = option.MergedAtUntil.Format(queryDateFormat)
+		since = option.MergedAtSince.UTC().Format(queryDateFormat)
+		until = option.MergedAtUntil.UTC().Format(queryDateFormat)
 	} else if option.MergedAtSince != nil {
-		since = option.MergedAtSince.Format(queryDateFormat)
+		since = option.MergedAtSince.UTC().Format(queryDateFormat)
 	} else if option.MergedAtUntil != nil {
-		until = option.MergedAtUntil.Format(queryDateFormat)
+		until = option.MergedAtUntil.UTC().Format(queryDateFormat)
 	}
 
 	if since != "*" || until != "*" {
