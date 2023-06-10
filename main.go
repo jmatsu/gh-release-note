@@ -96,6 +96,11 @@ func main() {
 					PromptStyle:    promptStyle,
 				}
 
+				if option.OpenAIAPIToken == "" {
+					_, _ = fmt.Fprintln(os.Stdout, "openai token is not specified so this command just prints the list of pull requests")
+					option.SkipGenerate = true
+				}
+
 				if repo, err := getRepo(c, "repo"); err != nil {
 					return option, err
 				} else {
