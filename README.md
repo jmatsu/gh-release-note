@@ -2,6 +2,10 @@
 
 A gh extension to generate release notes from merged pull requests.
 
+```bash
+gh extension install jmatsu/gh-release-note
+```
+
 <img src="docs/sample_release_note.png" width="400" loading="lazy" alt="">
 
 # THIS COMMAND IS STILL WIP
