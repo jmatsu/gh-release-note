@@ -97,6 +97,8 @@ func (c *gitHubServiceImpl) ListMergedPullRequests(option ListMergedPullRequests
 	if since != "*" || until != "*" {
 		// https://docs.github.com/en/search-github/getting-started-with-searching-on-github/understanding-the-search-syntax#query-for-dates
 		opts = append(opts, "--search", fmt.Sprintf("merged:%s..%s", since, until))
+	} else {
+		opts = append(opts, "is:merged")
 	}
 
 	// serialized attributes
