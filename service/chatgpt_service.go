@@ -59,7 +59,7 @@ func (s *chatGPTServiceImpl) GetSingleAnswer(prs []*types.PullRequest, templateT
 	resp, err := s.client.CreateChatCompletion(s.ctx, openai.ChatCompletionRequest{
 		Model:     openai.GPT3Dot5Turbo,
 		Messages:  messages,
-		MaxTokens: 500,
+		MaxTokens: 1024, // TODO experimental
 	})
 
 	if err != nil {
