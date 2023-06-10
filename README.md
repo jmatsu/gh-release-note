@@ -1,6 +1,6 @@
 # gh release-note
 
-A gh extension to generate release notes from pull requests merged between two dates.
+A gh extension to generate release notes from merged pull requests.
 
 <img src="docs/sample_release_note.png" width="400" loading="lazy" alt="">
 
