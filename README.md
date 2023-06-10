@@ -1,4 +1,4 @@
-# gh-release-note
+# gh release-note
 
 A gh extension to generate release notes from pull requests merged between two git refs.
 
