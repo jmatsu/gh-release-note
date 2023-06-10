@@ -64,13 +64,36 @@ func main() {
 				Name:  "until-tag",
 				Usage: "Select a tag name for the end position of the search range",
 			},
+			&cli.StringFlag{
+				Name:  "openai-token",
+				Usage: "Specify your OpenAI token",
+			},
+			&cli.StringFlag{
+				Name:  "prompt",
+				Usage: "Provide your custom prompt",
+			},
+			&cli.StringFlag{
+				Name:  "prompt-style",
+				Usage: "Select a name of built-in prompts. This will be ignored if --prompt is provided",
+				Value: string(cmd.SimplePromptStyle),
+			},
 		},
 		Action: func(c *cli.Context) error {
 			return cmd.GenerateReleaseNote(c, func(c *cli.Context) (cmd.ReleaseNoteOption, error) {
+				promptStyle := cmd.PromptStyle(c.String("prompt-style"))
+				customPrompt := c.String("prompt")
+
+				if customPrompt != "" {
+					promptStyle = cmd.CustomPromptStyle
+				}
+
 				option := cmd.ReleaseNoteOption{
-					Base:         c.String("base"),
-					Limit:        c.Int("limit"),
-					SkipGenerate: c.Bool("skip-generate"),
+					Base:           c.String("base"),
+					Limit:          c.Int("limit"),
+					SkipGenerate:   c.Bool("skip-generate"),
+					OpenAIAPIToken: c.String("openai-token"),
+					Prompt:         customPrompt,
+					PromptStyle:    promptStyle,
 				}
 
 				if repo, err := getRepo(c, "repo"); err != nil {

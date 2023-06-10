@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/c-bata/go-prompt"
 	"github.com/cli/go-gh/v2/pkg/repository"
+	"github.com/jmatsu/gh-release-note/prompts"
 	"github.com/jmatsu/gh-release-note/service"
 	"github.com/jmatsu/gh-release-note/types"
 	"github.com/urfave/cli/v2"
@@ -12,15 +13,25 @@ import (
 	"time"
 )
 
+const (
+	SimplePromptStyle PromptStyle = "simple"
+	CustomPromptStyle PromptStyle = "custom"
+)
+
+type PromptStyle string
+
 type ReleaseNoteOption struct {
-	Repo         repository.Repository
-	Base         string
-	Limit        int
-	SinceTagName *string
-	SinceDate    *time.Time
-	UntilTagName *string
-	UntilDate    *time.Time
-	SkipGenerate bool
+	Repo           repository.Repository
+	Base           string
+	Limit          int
+	SinceTagName   *string
+	SinceDate      *time.Time
+	UntilTagName   *string
+	UntilDate      *time.Time
+	SkipGenerate   bool
+	OpenAIAPIToken string
+	Prompt         string
+	PromptStyle    PromptStyle
 }
 
 func GenerateReleaseNote(c *cli.Context, f func(c *cli.Context) (ReleaseNoteOption, error)) error {
@@ -31,6 +42,11 @@ func GenerateReleaseNote(c *cli.Context, f func(c *cli.Context) (ReleaseNoteOpti
 	}
 
 	github := service.NewGitHubService(c.Context, opts.Repo)
+	var chatgpt service.ChatGPTService
+
+	if !opts.SkipGenerate {
+		chatgpt = service.NewChatGPTService(c.Context, opts.OpenAIAPIToken)
+	}
 
 	sinceDate, untilDate := opts.SinceDate, opts.UntilDate
 
@@ -102,6 +118,31 @@ func GenerateReleaseNote(c *cli.Context, f func(c *cli.Context) (ReleaseNoteOpti
 		}
 		return nil
 	}
+
+	if opts.PromptStyle == SimplePromptStyle {
+
+	}
+
+	var aiPrompt string
+
+	switch opts.PromptStyle {
+	case SimplePromptStyle:
+		aiPrompt = prompts.SimpleTxt
+		break
+	case CustomPromptStyle:
+		aiPrompt = opts.Prompt
+		break
+	default:
+		return errors.New(fmt.Sprintf("%s is an unknown prompt style", opts.PromptStyle))
+	}
+
+	releaseNote, err := chatgpt.GetSingleAnswer(prs, aiPrompt)
+
+	if err != nil {
+		return errors.Join(errors.New("could get pull requests but failed to generate a release note"), err)
+	}
+
+	fmt.Println(releaseNote)
 
 	return nil
 }

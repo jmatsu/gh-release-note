@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/c-bata/go-prompt v0.2.6
 	github.com/cli/go-gh/v2 v2.0.0
+	github.com/sashabaranov/go-openai v1.10.1
 	github.com/urfave/cli/v2 v2.25.5
 )
 

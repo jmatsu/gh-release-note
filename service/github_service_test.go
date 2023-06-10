@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-var service GitHubService
+var ghService GitHubService
 var repo repository.Repository
 var sha string
 
@@ -27,7 +27,7 @@ func init() {
 		sha = v
 	}
 
-	service = NewGitHubService(context.TODO(), repo)
+	ghService = NewGitHubService(context.TODO(), repo)
 }
 
 func TestGitHubServiceImpl_ListMergedPullRequests(t *testing.T) {
@@ -46,7 +46,7 @@ func TestGitHubServiceImpl_ListMergedPullRequests(t *testing.T) {
 
 	for i, arg := range args {
 		t.Run(fmt.Sprintf("case %d", i), func(t *testing.T) {
-			prs, err := service.ListMergedPullRequests(ListMergedPullRequestsOption{
+			prs, err := ghService.ListMergedPullRequests(ListMergedPullRequestsOption{
 				Base:          "main",
 				MergedAtSince: arg.since,
 				MergedAtUntil: arg.until,
@@ -69,7 +69,7 @@ func TestGitHubServiceImpl_ListMergedPullRequests(t *testing.T) {
 }
 
 func TestGitHubServiceImpl_ListTags(t *testing.T) {
-	tags, err := service.ListTags(10)
+	tags, err := ghService.ListTags(10)
 
 	if err != nil {
 		t.Fatalf("fails due to %v", err)

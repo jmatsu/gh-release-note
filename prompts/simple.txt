@@ -1,0 +1,6 @@
+Please generate a release note that must be categorized from the changes below. Reverted changes should be in one category. Similar changes can be merged into one line.
+
+Changes:
+{{ range $i, $pr := .Prs }}
+- {{ $pr.Title }} (pull request is #{{ $pr.Number }})
+{{ end }}
