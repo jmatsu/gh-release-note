@@ -31,8 +31,8 @@ func init() {
 }
 
 func TestGitHubServiceImpl_ListMergedPullRequests(t *testing.T) {
-	since, _ := time.Parse(time.DateOnly, "2023-06-01")
-	until, _ := time.Parse(time.DateOnly, "2023-06-09")
+	since, _ := time.Parse(time.DateOnly, "2023-06-10")
+	until := time.Now()
 
 	args := []struct {
 		since *time.Time
